@@ -109,12 +109,17 @@ func (c Client) GetAllLocationData(ctx context.Context, timelines bool) (data Lo
 // GetDataByCountryCode returns all cases from different locations
 // of a country by it's Country Code.
 // Check alpha-2 country codes here: https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
-func (c Client) GetDataByCountryCode(ctx context.Context, countryCode string) (data Locations, err error) {
+func (c Client) GetDataByCountryCode(ctx context.Context, countryCode string, timelines bool) (data Locations, err error) {
 	if countryCode == "" {
 		return Locations{}, errors.New("country code required")
 	}
 
-	endpoint := "/locations?country_code=" + countryCode
+	t := "0"
+	if timelines {
+		t = "1"
+	}
+
+	endpoint := "/locations?country_code=" + countryCode + "&timelines=" + t
 
 	r, err := http.NewRequest(http.MethodGet, DefaultBaseURL+endpoint, nil)
 	if err != nil {
@@ -133,6 +138,7 @@ type LocationData struct {
 }
 
 // GetDataByLocationID returns data of a specific location by it's ID.
+// You can Exclude/Include timelines. Timelines are excluded by default.
 // You can Exclude/Include timelines. Timelines are excluded by default.
 func (c Client) GetDataByLocationID(ctx context.Context, id int, timelines bool) (data LocationData, err error) {
 	t := "0"
