@@ -42,3 +42,24 @@ func (c Client) GetAllLocationData(ctx context.Context) (data Locations, err err
 	}
 	return data, nil
 }
+
+// GetDataByCountryCode returns all cases from different locations
+// of a country by it's Country Code.
+// Check alpha-2 country codes here: https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
+func (c Client) GetDataByCountryCode(ctx context.Context, countryCode string) (data Locations, err error) {
+	if countryCode == "" {
+		return Locations{}, errors.New("country code required")
+	}
+
+	endpoint := "/locations?country_code=" + countryCode
+
+	r, err := http.NewRequest(http.MethodGet, DefaultBaseURL+endpoint, nil)
+	if err != nil {
+		return Locations{}, errors.Wrap(err, "could not generate http request")
+	}
+
+	if err = c.Do(WithCtx(ctx, r), &data); err != nil {
+		return Locations{}, errors.Wrap(err, "request failed")
+	}
+	return data, nil
+}
