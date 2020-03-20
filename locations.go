@@ -14,17 +14,17 @@ type Coordinates struct {
 	Longitude string `json:"longitude"`
 }
 
-// Timeline struct holds latest count with timelines
-type Timeline struct {
+// LatestWithTimeline struct holds latest count with timelines
+type LatestWithTimeline struct {
 	Latest    int            `json:"latest"`
 	Timelines map[string]int `json:"timeline"`
 }
 
 // Timelines holds latest data with timelines
 type Timelines struct {
-	Confirmed Timeline `json:"confirmed"`
-	Deaths    Timeline `json:"deaths"`
-	Recovered Timeline `json:"recovered"`
+	Confirmed LatestWithTimeline `json:"confirmed"`
+	Deaths    LatestWithTimeline `json:"deaths"`
+	Recovered LatestWithTimeline `json:"recovered"`
 }
 
 // Location holds data of a location
