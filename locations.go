@@ -2,8 +2,10 @@ package gocorona
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/pkg/errors"
 )
@@ -14,10 +16,50 @@ type Coordinates struct {
 	Longitude string `json:"longitude"`
 }
 
+// CaseCountWithTimestamp holds timestamp with CaseCount
+type CaseCountWithTimestamp struct {
+	Timestamp time.Time
+	CaseCount int
+}
+
+// Timeline holds list of Case Counts with timestamp
+type Timeline struct {
+	Data []CaseCountWithTimestamp
+}
+
 // LatestWithTimeline struct holds latest count with timelines
 type LatestWithTimeline struct {
-	Latest    int            `json:"latest"`
-	Timelines map[string]int `json:"timeline"`
+	Latest   int      `json:"latest"`
+	Timeline Timeline `json:"timeline"`
+}
+
+// UnmarshalJSON implements the json.Unmarshaler interface.
+// coverts json keys from string to unix timestamp and
+// it's values as case count.
+func (t *LatestWithTimeline) UnmarshalJSON(data []byte) error {
+	type Alias LatestWithTimeline
+	aux := struct {
+		Timeline map[string]int `json:"timeline"`
+		*Alias
+	}{
+		Alias: (*Alias)(t),
+	}
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+
+	var temp CaseCountWithTimestamp
+	for k, v := range aux.Timeline {
+		timestamp, err := time.Parse(time.RFC3339, k)
+		if err != nil {
+			return err
+		}
+
+		temp.Timestamp = timestamp
+		temp.CaseCount = v
+		t.Timeline.Data = append(t.Timeline.Data, temp)
+	}
+	return nil
 }
 
 // Timelines holds latest data with timelines
