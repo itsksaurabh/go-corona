@@ -3,6 +3,7 @@ package gocorona
 import (
 	"context"
 	"net/http"
+	"strconv"
 
 	"github.com/pkg/errors"
 )
@@ -52,6 +53,26 @@ func (c Client) GetDataByCountryCode(ctx context.Context, countryCode string) (d
 	}
 
 	endpoint := "/locations?country_code=" + countryCode
+
+	r, err := http.NewRequest(http.MethodGet, DefaultBaseURL+endpoint, nil)
+	if err != nil {
+		return Locations{}, errors.Wrap(err, "could not generate http request")
+	}
+
+	if err = c.Do(WithCtx(ctx, r), &data); err != nil {
+		return Locations{}, errors.Wrap(err, "request failed")
+	}
+	return data, nil
+}
+
+// GetDataByLocationID returns data of a specific location by it's ID.
+// You can Exclude/Include timelines. Timelines are excluded by default.
+func (c Client) GetDataByLocationID(ctx context.Context, id int, timelines bool) (data Locations, err error) {
+	t := "0"
+	if timelines {
+		t = "1"
+	}
+	endpoint := "/locations/" + strconv.Itoa(id) + "?timelines=" + t
 
 	r, err := http.NewRequest(http.MethodGet, DefaultBaseURL+endpoint, nil)
 	if err != nil {
