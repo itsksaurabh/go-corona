@@ -85,9 +85,15 @@ type Locations struct {
 	Locations []Location `json:"locations"`
 }
 
-// GetAllLocationData returns all cases from all locations
-func (c Client) GetAllLocationData(ctx context.Context) (data Locations, err error) {
-	endpoint := "/locations"
+// GetAllLocationData returns all cases from all locations.
+// You can Exclude/Include timelines. Timelines are excluded by default.
+func (c Client) GetAllLocationData(ctx context.Context, timelines bool) (data Locations, err error) {
+	t := "0"
+	if timelines {
+		t = "1"
+	}
+
+	endpoint := "/locations" + "?timelines=" + t
 
 	r, err := http.NewRequest(http.MethodGet, DefaultBaseURL+endpoint, nil)
 	if err != nil {
