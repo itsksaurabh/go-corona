@@ -1,5 +1,12 @@
 package gocorona
 
+import (
+	"context"
+	"net/http"
+
+	"github.com/pkg/errors"
+)
+
 // Coordinates hols coordinates of a location
 type Coordinates struct {
 	Latitude  string `json:"latitude"`
@@ -19,4 +26,19 @@ type Location struct {
 // Locations holds response from endpoint /v2/locations
 type Locations struct {
 	Locations []Location `json:"locations"`
+}
+
+// GetAllLocationData returns all cases from all locations
+func (c Client) GetAllLocationData(ctx context.Context) (data Locations, err error) {
+	endpoint := "/locations"
+
+	r, err := http.NewRequest(http.MethodGet, DefaultBaseURL+endpoint, nil)
+	if err != nil {
+		return Locations{}, errors.Wrap(err, "could not generate http request")
+	}
+
+	if err = c.Do(WithCtx(ctx, r), &data); err != nil {
+		return Locations{}, errors.Wrap(err, "request failed")
+	}
+	return data, nil
 }
