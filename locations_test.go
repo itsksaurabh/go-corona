@@ -30,3 +30,16 @@ func TestGetDataByCountryCode(t *testing.T) {
 		}
 	}
 }
+
+func TestGetDataByLocationID(t *testing.T) {
+	client := gocorona.Client{}
+	ctx := context.Background()
+	locationID := 123
+
+	_, err := client.GetDataByLocationID(ctx, locationID, false)
+	if err != nil {
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+}
