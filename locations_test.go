@@ -3,12 +3,9 @@ package gocorona_test
 import (
 	"context"
 	"testing"
-
-	gocorona "github.com/itsksaurabh/go-corona"
 )
 
 func TestGetAllLocationData(t *testing.T) {
-	client := gocorona.Client{}
 	ctx := context.Background()
 
 	tests := map[string]struct {
@@ -20,7 +17,7 @@ func TestGetAllLocationData(t *testing.T) {
 
 	for name, tt := range tests {
 		t.Run(name, func(t *testing.T) {
-			_, err := client.GetAllLocationData(ctx, tt.wantTimeline)
+			_, err := testClient(t).GetAllLocationData(ctx, tt.wantTimeline)
 			if err != nil {
 				if err != nil {
 					t.Fatal(err)
@@ -31,7 +28,6 @@ func TestGetAllLocationData(t *testing.T) {
 }
 
 func TestGetDataByCountryCode(t *testing.T) {
-	client := gocorona.Client{}
 	ctx := context.Background()
 	countryCode := "US"
 
@@ -44,7 +40,7 @@ func TestGetDataByCountryCode(t *testing.T) {
 
 	for name, tt := range tests {
 		t.Run(name, func(t *testing.T) {
-			_, err := client.GetDataByCountryCode(ctx, countryCode, tt.wantTimeline)
+			_, err := testClient(t).GetDataByCountryCode(ctx, countryCode, tt.wantTimeline)
 			if err != nil {
 				if err != nil {
 					t.Fatal(err)
@@ -55,7 +51,6 @@ func TestGetDataByCountryCode(t *testing.T) {
 }
 
 func TestGetDataByLocationID(t *testing.T) {
-	client := gocorona.Client{}
 	ctx := context.Background()
 	locationID := 123
 
@@ -68,7 +63,7 @@ func TestGetDataByLocationID(t *testing.T) {
 
 	for name, tt := range tests {
 		t.Run(name, func(t *testing.T) {
-			_, err := client.GetDataByLocationID(ctx, locationID, tt.wantTimeline)
+			_, err := testClient(t).GetDataByLocationID(ctx, locationID, tt.wantTimeline)
 			if err != nil {
 				if err != nil {
 					t.Fatal(err)
