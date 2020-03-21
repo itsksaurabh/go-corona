@@ -16,7 +16,7 @@ It consumes data from [Coronavirus Tracker API](https://github.com/ExpDev07/coro
 
 #### Available data sources:
 
-* **jhu** - https://github.com/CSSEGISandData/COVID-19 - Data repository operated by the Johns Hopkins University Center for Systems Science and Engineering (JHU CSSE). More data sources to be added later.
+* **JHU** - https://github.com/CSSEGISandData/COVID-19 - Data repository operated by the Johns Hopkins University Center for Systems Science and Engineering (JHU CSSE). More data sources to be added later.
 
 ## Installation
 
