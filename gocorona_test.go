@@ -28,7 +28,7 @@ func (f roundTripFunc) RoundTrip(r *http.Request) (*http.Response, error) {
 	return f(r)
 }
 
-// client returns a gocorna.Client mainly for testing purposes.
+// testClient returns a gocorna.Client mainly for testing purposes.
 // It behaves as a reverse proxy agent, it reads testfile and
 // returns data as a response to requests made through it.
 //
