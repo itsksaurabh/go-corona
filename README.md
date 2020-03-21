@@ -1,6 +1,12 @@
 
 # go-corona
 
+[![itsksaurabh](https://circleci.com/gh/itsksaurabh/go-corona.svg?style=shield)](https://circleci.com/gh/itsksaurabh/workflows/go-corona/tree/master)
+[![Go Report Card](https://goreportcard.com/badge/github.com/itsksaurabh/go-corona)](https://goreportcard.com/report/github.com/itsksaurabh/go-corona)
+[![GoDoc](https://godoc.org/github.com/itsksaurabh/go-corona?status.svg)](https://godoc.org/github.com/itsksaurabh/go-corona)
+[![Built with Mage](https://magefile.org/badge.svg)](https://magefile.org)
+[![MIT License](https://img.shields.io/github/license/itsksaurabh/go-corona?style=social)](https://github.com/itsksaurabh/go-corona/blob/master/LICENSE)
+
 <img style="float:left;" width="200" src="./assets/logo.png"> 
 
 #### go-corona is a [Golang](http://golang.org/) client library for accessing global coronavirus (COVID-19, SARS-CoV-2) outbreak data.
