@@ -1,5 +1,5 @@
 /*
-Package gocorna go-corona is a Golang client library for accessing global coronavirus (COVID-19, SARS-CoV-2) outbreak data.
+Package gocorona is a Golang client library for accessing global coronavirus (COVID-19, SARS-CoV-2) outbreak data.
 It consumes data from Coronavirus Tracker API.
 
 You can read the API server documentation at https://github.com/ExpDev07/coronavirus-tracker-api.
