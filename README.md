@@ -126,3 +126,7 @@ I welcome pull requests, bug fixes and issue reports. Before proposing a change,
 ## License
 
 [MIT](LICENSE) © Kumar Saurabh
+
+## Logo Attributions
+
+The Go gopher was designed by Renee French. (<http://reneefrench.blogspot.com/)> Modified from the Gopher sticker made by Takuya Ueda (<https://twitter.com/tenntenn).> The Go Logo is copyrighted by the Go authors. All of the logo material are licensed under the Creative Commons 3.0 Attributions license.
