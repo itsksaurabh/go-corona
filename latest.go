@@ -33,3 +33,17 @@ func (c Client) GetLatestData(ctx context.Context) (data LatestData, err error) 
 	}
 	return data, nil
 }
+
+// GetLatestTotalDataFromCountry returns country's total of all regions combined confirmed cases, deaths, and recoveries.
+func (c Client) GetLatestTotalDataFromCountry(ctx context.Context, countryCode string) (data LatestData, err error) {
+	endpoint := "/locations?country_code=" + countryCode
+	r, err := http.NewRequest(http.MethodGet, DefaultBaseURL+endpoint, nil)
+	if err != nil {
+		return LatestData{}, errors.Wrap(err, "could not generate http request")
+	}
+
+	if err = c.Do(WithCtx(ctx, r), &data); err != nil {
+		return LatestData{}, errors.Wrap(err, "request failed")
+	}
+	return data, nil
+}
