@@ -76,10 +76,8 @@ func (c Client) Do(req *http.Request, target interface{}) error {
 	defer func() {
 		// Ensure the response body is fully read and closed
 		// before we reconnect, so that we reuse the same TCPconnection.
-		const maxBodySlurpSize = 2 << 10
-		if resp.ContentLength == -1 || resp.ContentLength <= maxBodySlurpSize {
-			io.CopyN(ioutil.Discard, resp.Body, maxBodySlurpSize)
-		}
+		const maxCopySize = 2 << 10
+		io.CopyN(ioutil.Discard, resp.Body, maxCopySize)
 		resp.Body.Close()
 	}()
 
