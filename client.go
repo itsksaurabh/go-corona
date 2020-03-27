@@ -19,12 +19,8 @@ const (
 	DefaultBaseURL = "https://coronavirus-tracker-api.herokuapp.com/v2"
 )
 
-// WithCtx applies 'ctx' to the the http.Request and returns *http.Request
-// The provided ctx and req must be non-nil
-func WithCtx(ctx context.Context, req *http.Request) *http.Request {
-	if req == nil {
-		panic("nil http.Request")
-	}
+// withCtx applies 'ctx' to the the http.Request and returns *http.Request
+func withCtx(ctx context.Context, req *http.Request) *http.Request {
 	return req.WithContext(ctx)
 }
 
@@ -43,7 +39,7 @@ func (c Client) makeGetRequest(ctx context.Context, endpoint string, target inte
 		return errors.Wrap(err, "could not generate http request")
 	}
 
-	if err = c.Do(WithCtx(ctx, r), target); err != nil {
+	if err = c.Do(withCtx(ctx, r), target); err != nil {
 		return errors.Wrap(err, "request failed")
 	}
 
