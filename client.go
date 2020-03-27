@@ -19,12 +19,8 @@ const (
 	DefaultBaseURL = "https://coronavirus-tracker-api.herokuapp.com/v2"
 )
 
-// WithCtx applies 'ctx' to the the http.Request and returns *http.Request
-// The provided ctx and req must be non-nil
-func WithCtx(ctx context.Context, req *http.Request) *http.Request {
-	if req == nil {
-		panic("nil http.Request")
-	}
+// withCtx applies 'ctx' to the the http.Request and returns *http.Request
+func withCtx(ctx context.Context, req *http.Request) *http.Request {
 	return req.WithContext(ctx)
 }
 
@@ -36,8 +32,22 @@ type Client struct {
 	BaseURL *url.URL
 }
 
-// Do sends the http.Request and unmarshalls the JSON response into 'target'
-func (c Client) Do(req *http.Request, target interface{}) error {
+// makeGetRequest generates HTTP GET request and calls Do func
+func (c Client) makeGetRequest(ctx context.Context, endpoint string, target interface{}) error {
+	r, err := http.NewRequest(http.MethodGet, DefaultBaseURL+endpoint, nil)
+	if err != nil {
+		return errors.Wrap(err, "could not generate http request")
+	}
+
+	if err = c.do(withCtx(ctx, r), target); err != nil {
+		return errors.Wrap(err, "request failed")
+	}
+
+	return nil
+}
+
+// do sends the http.Request and unmarshalls the JSON response into 'target'
+func (c Client) do(req *http.Request, target interface{}) error {
 	if req == nil {
 		return errors.New("invalid Request")
 	}
@@ -66,10 +76,8 @@ func (c Client) Do(req *http.Request, target interface{}) error {
 	defer func() {
 		// Ensure the response body is fully read and closed
 		// before we reconnect, so that we reuse the same TCPconnection.
-		const maxBodySlurpSize = 2 << 10
-		if resp.ContentLength == -1 || resp.ContentLength <= maxBodySlurpSize {
-			io.CopyN(ioutil.Discard, resp.Body, maxBodySlurpSize)
-		}
+		const maxCopySize = 2 << 10
+		io.CopyN(ioutil.Discard, resp.Body, maxCopySize)
 		resp.Body.Close()
 	}()
 

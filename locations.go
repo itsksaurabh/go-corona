@@ -3,7 +3,6 @@ package gocorona
 import (
 	"context"
 	"encoding/json"
-	"net/http"
 	"strconv"
 	"time"
 
@@ -94,14 +93,8 @@ func (c Client) GetAllLocationData(ctx context.Context, timelines bool) (data Lo
 	}
 
 	endpoint := "/locations" + "?timelines=" + t
-
-	r, err := http.NewRequest(http.MethodGet, DefaultBaseURL+endpoint, nil)
-	if err != nil {
-		return Locations{}, errors.Wrap(err, "could not generate http request")
-	}
-
-	if err = c.Do(WithCtx(ctx, r), &data); err != nil {
-		return Locations{}, errors.Wrap(err, "request failed")
+	if err = c.makeGetRequest(ctx, endpoint, &data); err != nil {
+		return Locations{}, err
 	}
 	return data, nil
 }
@@ -120,14 +113,8 @@ func (c Client) GetDataByCountryCode(ctx context.Context, countryCode string, ti
 	}
 
 	endpoint := "/locations?country_code=" + countryCode + "&timelines=" + t
-
-	r, err := http.NewRequest(http.MethodGet, DefaultBaseURL+endpoint, nil)
-	if err != nil {
-		return Locations{}, errors.Wrap(err, "could not generate http request")
-	}
-
-	if err = c.Do(WithCtx(ctx, r), &data); err != nil {
-		return Locations{}, errors.Wrap(err, "request failed")
+	if err = c.makeGetRequest(ctx, endpoint, &data); err != nil {
+		return Locations{}, err
 	}
 	return data, nil
 }
@@ -145,15 +132,11 @@ func (c Client) GetDataByLocationID(ctx context.Context, id int, timelines bool)
 	if timelines {
 		t = "1"
 	}
+
 	endpoint := "/locations/" + strconv.Itoa(id) + "?timelines=" + t
-
-	r, err := http.NewRequest(http.MethodGet, DefaultBaseURL+endpoint, nil)
-	if err != nil {
-		return LocationData{}, errors.Wrap(err, "could not generate http request")
+	if err = c.makeGetRequest(ctx, endpoint, &data); err != nil {
+		return LocationData{}, err
 	}
 
-	if err = c.Do(WithCtx(ctx, r), &data); err != nil {
-		return LocationData{}, errors.Wrap(err, "request failed")
-	}
 	return data, nil
 }

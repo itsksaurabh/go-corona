@@ -2,9 +2,6 @@ package gocorona
 
 import (
 	"context"
-	"net/http"
-
-	"github.com/pkg/errors"
 )
 
 // Latest holds fields related to latest data
@@ -23,13 +20,8 @@ type LatestData struct {
 func (c Client) GetLatestData(ctx context.Context) (data LatestData, err error) {
 	endpoint := "/latest"
 
-	r, err := http.NewRequest(http.MethodGet, DefaultBaseURL+endpoint, nil)
-	if err != nil {
-		return LatestData{}, errors.Wrap(err, "could not generate http request")
-	}
-
-	if err = c.Do(WithCtx(ctx, r), &data); err != nil {
-		return LatestData{}, errors.Wrap(err, "request failed")
+	if err := c.makeGetRequest(ctx, endpoint, &data); err != nil {
+		return LatestData{}, err
 	}
 	return data, nil
 }
