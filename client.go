@@ -36,6 +36,20 @@ type Client struct {
 	BaseURL *url.URL
 }
 
+// makeGetRequest generates HTTP GET request and calls Do func
+func (c Client) makeGetRequest(ctx context.Context, endpoint string, target interface{}) error {
+	r, err := http.NewRequest(http.MethodGet, DefaultBaseURL+endpoint, nil)
+	if err != nil {
+		return errors.Wrap(err, "could not generate http request")
+	}
+
+	if err = c.Do(WithCtx(ctx, r), target); err != nil {
+		return errors.Wrap(err, "request failed")
+	}
+
+	return nil
+}
+
 // Do sends the http.Request and unmarshalls the JSON response into 'target'
 func (c Client) Do(req *http.Request, target interface{}) error {
 	if req == nil {
