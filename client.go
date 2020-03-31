@@ -39,15 +39,15 @@ func (c Client) makeGetRequest(ctx context.Context, endpoint string, target inte
 		return errors.Wrap(err, "could not generate http request")
 	}
 
-	if err = c.do(withCtx(ctx, r), target); err != nil {
+	if err = c.Do(withCtx(ctx, r), target); err != nil {
 		return errors.Wrap(err, "request failed")
 	}
 
 	return nil
 }
 
-// do sends the http.Request and unmarshalls the JSON response into 'target'
-func (c Client) do(req *http.Request, target interface{}) error {
+// Do sends the http.Request and unmarshalls the JSON response into 'target'
+func (c Client) Do(req *http.Request, target interface{}) error {
 	if req == nil {
 		return errors.New("invalid Request")
 	}
