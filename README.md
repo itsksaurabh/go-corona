@@ -106,7 +106,7 @@ Then run all tests by executing the following in your command line:
 
 **Updating Test Data**
 
-You can update the test data inside `./testdata/` dir by enabling the `-update` flag while testing. By default the flag is set to `false`.
+You can update the test data inside `./testdata/` directory by enabling the `-update` flag while testing. By default the flag is set to `false`.
 
 Or
 
