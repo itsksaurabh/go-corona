@@ -2,10 +2,13 @@ package gocorona_test
 
 import (
 	"bytes"
-	"encoding/json"
 	"flag"
+	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/http/httptest"
+	"net/url"
+	"os"
 	"strings"
 	"testing"
 
@@ -14,18 +17,30 @@ import (
 )
 
 var (
-	updateTestData = flag.Bool(
-		"update",
-		false,
-		"if set then update testdata else use saved testdata for testing.",
-	)
+	testServer     *url.URL
+	testDataDir    = "./testdata/"
+	updateTestData = flag.Bool("update", false, "if set then update testdata else use saved testdata for testing.")
 )
 
-type roundTripFunc func(r *http.Request) (*http.Response, error)
+func TestMain(m *testing.M) {
+	flag.Parse()
 
-// RoundTrip implements http.RoundTripper interface.
-func (f roundTripFunc) RoundTrip(r *http.Request) (*http.Response, error) {
-	return f(r)
+	// Run testServer for unit tests
+	if !*updateTestData {
+		server := httptest.NewServer(http.FileServer(http.Dir(testDataDir)))
+
+		surl, err := url.Parse(server.URL)
+		if err != nil {
+			fmt.Println("testServer URL parse failed:", err)
+			os.Exit(1)
+		}
+		testServer = surl
+
+		defer server.Close()
+	}
+
+	os.Exit(m.Run())
+	return
 }
 
 // testClient returns a gocorna.Client mainly for testing purposes.
@@ -37,22 +52,46 @@ func testClient(t *testing.T) gocorona.Client {
 	c := gocorona.Client{
 		HTTP: http.DefaultClient,
 	}
-	c.HTTP.Transport = roundTripFunc(func(r *http.Request) (*http.Response, error) {
-		if flag.Parse(); *updateTestData {
-			if err := writeTestData(t, r); err != nil {
-				return nil, errors.Wrap(err, "write testdata failed")
-			}
-		}
-		return &http.Response{
-			StatusCode: http.StatusOK,
-			Body:       ioutil.NopCloser(readTestData(t)),
-		}, nil
-	})
 
+	if *updateTestData {
+		c.HTTP.Transport = &saverTransport{t}
+		return c
+	}
+
+	c.HTTP.Transport = &loaderTransport{t}
 	return c
 }
 
-// returns filename for saving response JSON
+// saverTransport saves response body to testdata file
+type saverTransport struct{ t *testing.T }
+
+func (st saverTransport) RoundTrip(r *http.Request) (*http.Response, error) {
+	resp, err := http.DefaultTransport.RoundTrip(r)
+	if err != nil {
+		return resp, errors.Wrap(err, "request failed")
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return resp, err
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return resp, errors.Wrap(err, "read body failed")
+	}
+	resp.Body = ioutil.NopCloser(bytes.NewBuffer(body))
+
+	err = ioutil.WriteFile(testDataDir+filename(st.t), body, 0644)
+	return resp, errors.Wrap(err, "write file failed")
+}
+
+// loaderTransport loads response from testdata file
+type loaderTransport struct{ t *testing.T }
+
+func (lt loaderTransport) RoundTrip(r *http.Request) (*http.Response, error) {
+	return http.Get(testServer.String() + "/" + filename(lt.t))
+}
+
 func filename(t *testing.T) string {
 	name := t.Name()
 	if strings.Contains(name, "/") { // If a subtest
@@ -60,36 +99,4 @@ func filename(t *testing.T) string {
 	}
 	name = strings.TrimPrefix(name, "Test")
 	return name + ".json"
-}
-
-// readTestData loads response from testdata files and returns
-// a new Reader reading from []bytes
-// It creates filename with the help on test name
-func readTestData(t *testing.T) *bytes.Reader {
-	raw, err := ioutil.ReadFile("./testdata/" + filename(t))
-	if err != nil {
-		t.Error(err)
-	}
-	return bytes.NewReader(raw)
-}
-
-// writeTestData writes testdata to files
-// It creates filename with the help on test name
-func writeTestData(t *testing.T, r *http.Request) error {
-	resp, err := http.DefaultTransport.RoundTrip(r)
-	if err != nil {
-		return errors.Wrap(err, "request failed")
-	}
-
-	// decodes resp.Body into raw
-	var raw json.RawMessage
-	if err := json.NewDecoder(resp.Body).Decode(&raw); err != nil {
-		return errors.Wrap(err, "body decode failed")
-	}
-
-	err = ioutil.WriteFile("./testdata/"+filename(t), raw, 0644)
-	if err != nil {
-		return errors.Wrap(err, "write test data failed")
-	}
-	return nil
 }
