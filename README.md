@@ -106,16 +106,17 @@ Then run all tests by executing the following in your command line:
 
 **Updating Test Data**
 
-You can update the test data inside `./testdata/` by enabling the following flag inside the file [gocorona_test.go](./gocorona_test.go#L16) and then perform testing. By default the flag is set to `false`.
-```go
-var (
-	updateTestData = flag.Bool(
-		"update",
-		true,
-		"if set then update testdata else use saved testdata for testing.",
-	)
-)
+You can update the test data inside `./testdata/` dir by enabling the `-update` flag while testing. By default the flag is set to `false`.
+
+Or
+
+simply Run the following command to update all test data :
+
+```sh
+$ mage generate
 ```
+
+
 # Contributing
 I welcome pull requests, bug fixes and issue reports. Before proposing a change, please discuss your change by raising an issue.
 
