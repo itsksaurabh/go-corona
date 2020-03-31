@@ -3,11 +3,9 @@ package gocorona_test
 import (
 	"bytes"
 	"flag"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"os"
 	"strings"
 	"testing"
@@ -17,7 +15,7 @@ import (
 )
 
 var (
-	testServer     *url.URL
+	testServer     string
 	testDataDir    = "./testdata/"
 	updateTestData = flag.Bool("update", false, "if set then update testdata else use saved testdata for testing.")
 )
@@ -28,15 +26,8 @@ func TestMain(m *testing.M) {
 	// Run testServer for unit tests
 	if !*updateTestData {
 		server := httptest.NewServer(http.FileServer(http.Dir(testDataDir)))
-
-		surl, err := url.Parse(server.URL)
-		if err != nil {
-			fmt.Println("testServer URL parse failed:", err)
-			os.Exit(1)
-		}
-		testServer = surl
-
 		defer server.Close()
+		testServer = server.URL
 	}
 
 	os.Exit(m.Run())
@@ -50,15 +41,15 @@ func TestMain(m *testing.M) {
 // If update flag is set, it will save the real data to testfile.
 func testClient(t *testing.T) gocorona.Client {
 	c := gocorona.Client{
-		HTTP: http.DefaultClient,
-	}
-
-	if *updateTestData {
-		c.HTTP.Transport = &saverTransport{t}
-		return c
+		HTTP: &http.Client{},
 	}
 
 	c.HTTP.Transport = &loaderTransport{t}
+
+	if *updateTestData {
+		c.HTTP.Transport = &saverTransport{t}
+	}
+
 	return c
 }
 
@@ -89,7 +80,7 @@ func (st saverTransport) RoundTrip(r *http.Request) (*http.Response, error) {
 type loaderTransport struct{ t *testing.T }
 
 func (lt loaderTransport) RoundTrip(r *http.Request) (*http.Response, error) {
-	return http.Get(testServer.String() + "/" + filename(lt.t))
+	return http.Get(testServer + "/" + filename(lt.t))
 }
 
 func filename(t *testing.T) string {
