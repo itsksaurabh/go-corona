@@ -86,7 +86,7 @@ func (lt loaderTransport) RoundTrip(r *http.Request) (*http.Response, error) {
 func filename(t *testing.T) string {
 	name := t.Name()
 	if strings.Contains(name, "/") { // If a subtest
-		name = name[strings.LastIndex(t.Name(), "/")+1:]
+		name = strings.Replace(name, "/", "_", -1)
 	}
 	name = strings.TrimPrefix(name, "Test")
 	return name + ".json"
