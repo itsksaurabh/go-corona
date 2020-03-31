@@ -50,3 +50,10 @@ func Test() error {
 	fmt.Println("Testing...")
 	return sh.RunWith(env, "go", "test", "-v", "-cover", "./...")
 }
+
+// Generates test data
+func Generate() error {
+	mg.SerialDeps(Clean, Fmt, Vet, Dep)
+	fmt.Println("generating test data...")
+	return sh.RunWith(env, "go", "test", "-v", "-update", "./...")
+}
