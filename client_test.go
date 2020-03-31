@@ -83,6 +83,7 @@ func (lt loaderTransport) RoundTrip(r *http.Request) (*http.Response, error) {
 	return http.Get(testServer + "/" + filename(lt.t))
 }
 
+// returns filename for saving/loading response JSON
 func filename(t *testing.T) string {
 	name := t.Name()
 	if strings.Contains(name, "/") { // If a subtest
