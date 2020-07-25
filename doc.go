@@ -14,7 +14,7 @@ For demonstration:
 	"fmt"
 	"log"
 
-   	"github.com/itsksaurabh/go-corona"
+   	"github.com/itsksaurabh/go-corona/V2"
  )
 
   func main() {

@@ -1,4 +1,4 @@
-module github.com/itsksaurabh/go-corona
+module github.com/itsksaurabh/go-corona/V2
 
 go 1.13
 
