@@ -36,7 +36,7 @@ Then, add the following to your Golang project:
 
 ```go
 import (
-	"github.com/itsksaurabh/go-corona"
+	"github.com/itsksaurabh/go-corona/v2"
 )
 ```
 
@@ -53,7 +53,7 @@ import (
 	"fmt"
 	"log"
 	
-	"github.com/itsksaurabh/go-corona"
+	"github.com/itsksaurabh/go-corona/v2"
 )
 
 func main() {
