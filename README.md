@@ -53,7 +53,7 @@ import (
 	"fmt"
 	"log"
 	
-	"github.com/itsksaurabh/go-corona/V2"
+	"github.com/itsksaurabh/go-corona/v2"
 )
 
 func main() {
