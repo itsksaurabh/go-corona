@@ -36,7 +36,7 @@ Then, add the following to your Golang project:
 
 ```go
 import (
-	"github.com/itsksaurabh/go-corona"
+	"github.com/itsksaurabh/go-corona/v2"
 )
 ```
 
