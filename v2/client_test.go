@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	gocorona "github.com/itsksaurabh/go-corona/V2"
+	gocorona "github.com/itsksaurabh/go-corona/v2"
 	"github.com/pkg/errors"
 )
 
